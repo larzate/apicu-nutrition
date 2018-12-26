@@ -1,0 +1,147 @@
+---
+openapi: 3.0.2
+info:
+  title: Nutrition Diary
+  description: An API to Power a nutrition tracking mobile app.
+  version: 1.0.0
+servers:
+- url: http://{username}.nutrition-api.com/{baseVersion}
+  description: server URL description
+  variables:
+    username:
+      default: prod
+      description: server prod
+    baseVersion:
+      default: v1
+      description: first version
+paths:
+  /entries/:
+    get:
+      summary: Fetches the given number of entries for the user
+      description: An API call which by default returns the 5 most recent Entry items
+        for the logged in user. Query parameters allow edit to be made to the number
+        of queries, order and more.
+      parameters:
+      - name: limit
+        in: query
+        description: Number of entries to return (default-5)
+        required: true
+        schema:
+          type: number
+      - name: order
+        in: query
+        description: ASC or DESC (default = DESC)
+        required: true
+        schema:
+          type: string
+      - name: orderby
+        in: query
+        description: Date or name (default = Date)
+        schema: {}
+      responses:
+        200:
+          description: ejemplo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entry'
+              examples:
+                test:
+                  value: |-
+                    [
+                        {
+                            "Calories": 83.71,
+                            "Date": "2018-02-10T09:30Z",
+                            "ID": 98.85,
+                            "Picture": "some text",
+                            "MealType": "some text",
+                            "Name": "some text",
+                            "Notes": "some text",
+                            "Ingredients": [
+                                {
+                                    "foodgroup": "some text"
+                                },
+                                {
+                                    "foodgroup": "some text"
+                                }
+                            ]
+                        },
+                        {
+                            "Calories": 92.99,
+                            "Date": "2018-02-10T09:30Z",
+                            "ID": 93.18,
+                            "Picture": "some text",
+                            "MealType": "some text",
+                            "Name": "some text",
+                            "Notes": "some text",
+                            "Ingredients": [
+                                {
+                                    "foodgroup": "some text"
+                                },
+                                {
+                                    "foodgroup": "some text"
+                                }
+                            ]
+                        }
+                    ]
+  /entries/date/{date}:
+    get: {}
+    parameters:
+    - name: date
+      in: path
+      description: Date of entries desired
+      required: true
+      schema:
+        format: date
+        type: string
+components:
+  schemas:
+    Ingredient:
+      description: Food Group
+      required:
+      - foodgroup
+      type: object
+      properties:
+        foodgroup:
+          description: a string like fruit or grain
+          type: string
+    Entry:
+      required:
+      - Calories
+      - Date
+      - ID
+      - Picture
+      - MealType
+      - Name
+      - Notes
+      - Ingredients
+      type: object
+      properties:
+        Calories:
+          format: float
+          description: Aproximate number of calories.
+          type: number
+        Date:
+          format: date-time
+          description: The date and time the entry was first post.
+          type: string
+        ID:
+          type: number
+        Picture:
+          description: A picture of the meal.
+          type: string
+        MealType:
+          description: breakfast , meal , dinner, snack etc.
+          type: string
+        Name:
+          type: string
+        Notes:
+          description: Anything of note about the meal.
+          type: string
+        Ingredients:
+          description: All ingredient/dishes in the meal
+          type: array
+          items:
+            $ref: '#/components/schemas/Ingredient'
